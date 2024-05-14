@@ -1,0 +1,35 @@
+[package]
+name = "summa-bencher"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+const_env = "0.1.2"
+halo2_proofs = { git = "https://github.com/summa-dev/halo2.git", version = "0.2.0" }
+halo2_solidity_verifier = { git = "https://github.com/summa-dev/halo2-solidity-verifier", version = "0.1.0", features = ["evm"] }
+num-bigint = "0.4.5"
+plonkish_backend = { git = "https://github.com/summa-dev/plonkish", branch = "nonzero-constraints", version = "0.1.0" }
+rand = "0.8.5"
+rayon = "1.10.0"
+serde = { version = "1.0.201", features = ["derive"] }
+serde_json = "1.0.117"
+summa-solvency-v1 = { git = "https://github.com/summa-dev/summa-solvency", rev = "5237346", version = "0.1.0", package = "summa-solvency" }
+summa-solvency-v2 = { git = "https://github.com/summa-dev/summa-solvency", branch = "v2", version = "0.2.0", package = "summa-solvency" }
+# TODO: update branch when v3 is ready.
+summa-solvency-v3 = { git = "https://github.com/summa-dev/summa-solvency", branch = "v3-direct-sumcheck", version = "0.3.0", package = "summa-hyperplonk" }
+tokio = { version = "1.37.0", features = ["full"] }
+
+
+[[bench]]
+name = "v1"
+harness = false
+
+[[bench]]
+name = "v2"
+harness = false
+
+[[bench]]
+name = "v3"
+harness = false
