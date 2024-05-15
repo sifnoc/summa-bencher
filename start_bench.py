@@ -27,7 +27,7 @@ def get_instance_id_or_uuid(timeout_seconds=3):
 try:
   # K is only used in V1. otherwise K is replaced by `LEVELS`
   k = os.environ['K']
-  n_levels = os.environ['N_LEVELS'] # Used as K in v2 and v3
+  levels = os.environ['LEVELS'] # Used as K in v2 and v3
   n_currencies = os.environ['N_CURRENCIES']
   region_name = os.environ['REGION_NAME']
   bucket_name = os.environ['S3_BUCKET']
@@ -35,7 +35,7 @@ except KeyError as e:
     print(f"Environment variable {str(e)} not found")
     exit(1)
     
-print(f"Running benchmarks with {n_levels} levels and {n_currencies} currencies")
+print(f"Running benchmarks with {levels} levels and {n_currencies} currencies")
 
 try:
     # Run benchmarks
@@ -84,10 +84,10 @@ except boto3.exceptions.botocore.exceptions.ClientError as e:
 
 # Upload benchmark results to S3
 benchmark_id = get_instance_id_or_uuid()
-n_users = 1 << int(n_levels)
+n_users = 1 << int(levels)
 bench_result_v1_filename = f'v1_k{k}_u{n_users}_c{n_currencies}.json'
-bench_result_v2_filename = f'v2_k{n_levels}_u{n_users - 6}_c{n_currencies}.json'
-bench_result_v3_filename = f'v3_k{n_levels}_u{n_users - 6}_c{n_currencies}.json'
+bench_result_v2_filename = f'v2_k{levels}_u{n_users - 6}_c{n_currencies}.json'
+bench_result_v3_filename = f'v3_k{levels}_u{n_users - 6}_c{n_currencies}.json'
 
 for filename in [bench_result_v1_filename, bench_result_v2_filename, bench_result_v3_filename]:
   try:
