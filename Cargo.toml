@@ -10,26 +10,25 @@ const_env = "0.1.2"
 halo2_proofs = { git = "https://github.com/summa-dev/halo2.git", version = "0.2.0" }
 halo2_solidity_verifier = { git = "https://github.com/summa-dev/halo2-solidity-verifier", version = "0.1.0", features = ["evm"] }
 num-bigint = "0.4.5"
-plonkish_backend = { git = "https://github.com/summa-dev/plonkish", branch = "nonzero-constraints", version = "0.1.0" }
+plonkish_backend_nonzero = { git = "https://github.com/summa-dev/plonkish", branch = "nonzero-constraints", package = "plonkish_backend", version = "0.1.0" }
+plonkish_backend = { git = "https://github.com/summa-dev/plonkish", branch = "summa", version = "0.1.0" }
 rand = "0.8.5"
 rayon = "1.10.0"
 serde = { version = "1.0.201", features = ["derive"] }
 serde_json = "1.0.117"
-summa-solvency-v1 = { git = "https://github.com/summa-dev/summa-solvency", rev = "5237346", version = "0.1.0", package = "summa-solvency" }
-summa-solvency-v2 = { git = "https://github.com/summa-dev/summa-solvency", branch = "v2", version = "0.2.0", package = "summa-solvency" }
-# TODO: update branch when v3 is ready.
-summa-solvency-v3 = { git = "https://github.com/summa-dev/summa-solvency", branch = "v3-direct-sumcheck", version = "0.3.0", package = "summa-hyperplonk" }
+summa-solvency-v3a = { git = "https://github.com/summa-dev/summa-solvency", branch = "v3a", version = "0.3.0", package = "summa-hyperplonk" }
+summa-solvency-v3b = { git = "https://github.com/summa-dev/summa-solvency", branch = "v3b_candidate", version = "0.3.0", package = "summa-hyperplonk" }
+summa-solvency-v3c = { git = "https://github.com/summa-dev/summa-solvency", branch = "v3c", version = "0.3.0", package = "summa-hyperplonk" }
 tokio = { version = "1.37.0", features = ["full"] }
 
-
 [[bench]]
-name = "v1"
+name = "v3a"
 harness = false
 
 [[bench]]
-name = "v2"
+name = "v3b"
 harness = false
 
 [[bench]]
-name = "v3"
+name = "v3c"
 harness = false

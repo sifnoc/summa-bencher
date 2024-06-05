@@ -1,29 +1,25 @@
 use const_env::from_env;
-use plonkish_backend::{
+use plonkish_backend_nonzero::{
     backend::{hyperplonk::HyperPlonk, PlonkishBackend, PlonkishCircuit, PlonkishCircuitInfo},
     frontend::halo2::Halo2Circuit,
     halo2_curves::bn256::{Bn256, Fr as Fp},
     pcs::{multilinear::MultilinearKzg, Evaluation, PolynomialCommitmentScheme},
-    util::{
-        test::{seeded_std_rng, std_rng},
-        transcript::{InMemoryTranscript, Keccak256Transcript},
-    },
+    util::transcript::{InMemoryTranscript, Keccak256Transcript},
 };
 use rand::{rngs::OsRng, Rng};
 use std::time::Instant;
 
-use summa_bencher::BenchmarkResult;
-use summa_solvency_v3::{
+use summa_bencher::{BenchmarkResult, seeded_std_rng};
+use summa_solvency_v3b::{
     circuits::{config::range_check_config::RangeCheckConfig, summa_circuit::SummaHyperplonk},
     utils::{big_uint_to_fp, generate_dummy_entries, uni_to_multivar_binary_index},
 };
 
 #[from_env]
 const LEVELS: u32 = 17;
+const N_CURRENCIES: usize = 3;
 #[from_env]
-const N_CURRENCIES: usize = 1;
-#[from_env]
-const N_USERS: usize = (1 << LEVELS) - 6;
+const N_USERS: usize = (1 << LEVELS) - 2;
 
 fn main() {
     type ProvingBackend = HyperPlonk<MultilinearKzg<Bn256>>;
@@ -43,10 +39,10 @@ fn main() {
 
     let (pp, vp) = ProvingBackend::preprocess(&param, &circuit_info).unwrap();
 
-    println!("Generating commitment proof(grand-sum proof) - v3");
+    println!("Generating commitment proof(grand-sum proof) - v3b");
     let build_commitment_timer = Instant::now();
     let mut transcript = Keccak256Transcript::default();
-    let witness_polys = ProvingBackend::prove(&pp, &circuit, &mut transcript, std_rng()).unwrap();
+    let witness_polys = ProvingBackend::prove(&pp, &circuit, &mut transcript, seeded_std_rng()).unwrap();
     let proof = transcript.into_proof();
     let commitment_generation_time = build_commitment_timer.elapsed();
 
@@ -78,7 +74,7 @@ fn main() {
         }
     }
 
-    println!("Generating Inclusion proof - v3");
+    println!("Generating Inclusion proof - v3b");
     let build_inclusion_timer = Instant::now();
     let mut kzg_transcript = Keccak256Transcript::new(());
     MultilinearKzg::<Bn256>::batch_open(
@@ -103,5 +99,5 @@ fn main() {
     );
 
     println!("benchmark result: {:?}", benchmark_result);
-    benchmark_result.save_as_file(&format!("v3_k{LEVELS}_u{N_USERS}_c{N_CURRENCIES}.json"));
+    benchmark_result.save_as_file(&format!("v3b_k{LEVELS}_u{N_USERS}_c{N_CURRENCIES}.json"));
 }

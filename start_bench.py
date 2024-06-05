@@ -25,9 +25,7 @@ def get_instance_id_or_uuid(timeout_seconds=3):
 
 # Benchmark
 try:
-  # K is only used in V1. otherwise K is replaced by `LEVELS`
-  k = os.environ['K']
-  levels = os.environ['LEVELS'] # Used as K in v2 and v3
+  levels = os.environ['LEVELS'] # Used as K in V3s
   n_currencies = os.environ['N_CURRENCIES']
   region_name = os.environ['REGION_NAME']
   bucket_name = os.environ['S3_BUCKET']
@@ -39,14 +37,14 @@ print(f"Running benchmarks with {levels} levels and {n_currencies} currencies")
 
 try:
     # Run benchmarks
-    bench_v1 = subprocess.run(['cargo', 'bench', '--bench', 'v1'], capture_output=True)
-    print("run result in v1:", bench_v1.stdout.decode())
+    bench_v3a = subprocess.run(['cargo', 'bench', '--bench', 'v3a'], capture_output=True)
+    print("run result in v3a:", bench_v3a.stdout.decode())
 
-    bench_v2 = subprocess.run(['cargo', 'bench', '--bench', 'v2'], capture_output=True)
-    print("run result in v2:", bench_v2.stdout.decode())
+    bench_v3b = subprocess.run(['cargo', 'bench', '--bench', 'v3b'], capture_output=True)
+    print("run result in v3b:", bench_v3b.stdout.decode())
 
-    bench_v3 = subprocess.run(['cargo', 'bench', '--bench', 'v3'], capture_output=True)
-    print("run result in v3:", bench_v3.stdout.decode())
+    bench_v3c = subprocess.run(['cargo', 'bench', '--bench', 'v3c'], capture_output=True)
+    print("run result in v3c:", bench_v3c.stdout.decode())
 except Exception as e:
     print(f"An error occurred: {str(e)}")
     exit(1)
@@ -85,11 +83,11 @@ except boto3.exceptions.botocore.exceptions.ClientError as e:
 # Upload benchmark results to S3
 benchmark_id = get_instance_id_or_uuid()
 n_users = 1 << int(levels)
-bench_result_v1_filename = f'v1_k{k}_u{n_users}_c{n_currencies}.json'
-bench_result_v2_filename = f'v2_k{levels}_u{n_users - 6}_c{n_currencies}.json'
-bench_result_v3_filename = f'v3_k{levels}_u{n_users - 6}_c{n_currencies}.json'
+bench_result_v3a_filename = f'v3a_k{levels}_u{n_users - 1}_c{n_currencies}.json'
+bench_result_v3b_filename = f'v3b_k{levels}_u{n_users - 2}_c3.json'
+bench_result_v3c_filename = f'v3c_k{levels}_u{n_users - 2}_c1.json'
 
-for filename in [bench_result_v1_filename, bench_result_v2_filename, bench_result_v3_filename]:
+for filename in [bench_result_v3a_filename, bench_result_v3b_filename, bench_result_v3c_filename]:
   try:
     s3.upload_file(filename, bucket_name, f'{filename.replace(".", f"_{benchmark_id}.")}', ExtraArgs={'ACL': 'public-read'})
   except FileNotFoundError:

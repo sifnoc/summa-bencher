@@ -42,3 +42,13 @@ impl BenchmarkResult {
             .expect("Unable to write data to file");
     }
 }
+
+// Generate a random number generator
+use rand::{
+    rngs::{OsRng, StdRng},
+    CryptoRng, RngCore, SeedableRng,
+};
+
+pub fn seeded_std_rng() -> impl RngCore + CryptoRng {
+    StdRng::seed_from_u64(OsRng.next_u64())
+}
